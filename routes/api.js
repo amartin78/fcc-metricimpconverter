@@ -24,19 +24,24 @@ module.exports = function (app) {
       var returnUnit = convertHandler.getReturnUnit(initUnit);
       var toString = convertHandler.getString(initNum, initUnit, returnNum, returnUnit);
       
-      console.log(input, initNum, initUnit, returnNum, returnUnit, toString);
-    
-//       if (!returnNum.valid) {
-//         // console.log(returnNum)
-        
-//         // res.json({error: 'invalid number'});
-//       } else if (!initUnit.valid) {
-//         // res.json({error: 'invalid unit'});
-//       } else {
-//         res.json(initNum, initUnit, returnNum, returnUnit, toString);
-//       }
-    
-        res.json({initNum, initUnit, returnNum, returnUnit, toString});
+      // if (initUnit === 'no unit') {
+      //   res.send('no unit');
+      // }
+    console.log(initUnit, returnNum)
+      if ((returnUnit === 'invalid unit' | initUnit === 'invalid unit') & (returnNum === 'invalid number' | returnNum === 1)) {
+        res.send('invalid number and unit');
+      } else if (returnUnit === 'invalid unit') {
+        res.send('invalid unit');
+      } else if (returnNum === 'invalid number') {
+        res.send('invalid number');
+      } else {
+        res.json({
+          'initNum': initNum,
+          'initUnit':initUnit,
+          'returnNum': returnNum,
+          'returnUnit': returnUnit,
+          'string': toString
+        });
+      }
     });
-    
 };

@@ -9,7 +9,9 @@
 function ConvertHandler() {
   
   this.getNum = function(input) {
-    var idx = input.match(/[a-z]|[A-Z]/).index;
+    var match  = input.match(/[a-z]|[A-Z]/);
+    console.log(match)
+    var idx = match ? match.index : null;
     var result = input.slice(0, idx);
     if (result === '') {
       return 1;
@@ -17,13 +19,20 @@ function ConvertHandler() {
     if (result.indexOf('/') != -1) {
       result = result.split('/');
       result = (result[0]/result[1]).toPrecision(6);
-    } 
+    }
+    
     return result;
   };
   
   this.getUnit = function(input) {
-    var idx = input.match(/[a-z]|[A-Z]/).index;
+    var match  = input.match(/[a-z]|[A-Z]/);
+    var idx = match ? match.index : null;
     var result = input.slice(idx);
+    
+    // if (result === '') {
+    //   return 'invalid unit';
+    // }
+    
     return result;
   };
   
@@ -46,9 +55,16 @@ function ConvertHandler() {
   };
 
   this.spellOutUnit = function(unit) {
-    var result;
+    var units = {
+      gal: 'gallons',
+      lbs: 'pounds',
+      mi:  'miles',
+      L:   'liters',
+      kg:  'kilograms',
+      km:  'kilometers'
+    }
     
-    return result;
+    return units[unit];
   };
   
   this.convert = function(initNum, initUnit) {
@@ -56,38 +72,24 @@ function ConvertHandler() {
     const lbsToKg = 0.453592;
     const miToKm = 1.60934;
     
-    
-    if (isNaN(initNum)) {
+    if (isNaN(initNum) | !isFinite(initNum)) {
       return 'invalid number';
     }
     
-    switch (initUnit) {
-      case 'gal':
-        return Number(galToL * initNum).toPrecision(6);
-        break;
-      case 'lbs':
-        return Number(lbsToKg * initNum).toPrecision(6);
-        break;
-      case 'mi':
-        return Number(miToKm * initNum).toPrecision(6);
-        break;
-      case 'L':
-        return Number(1/galToL * initNum).toPrecision(6);
-        break;
-      case 'kg':
-        return Number(1/lbsToKg * initNum).toPrecision(6);
-        break;
-      case 'km':
-        return Number(1/miToKm * initNum).toPrecision(6);
-        break;
-      default:
-        return 1;
+    var units = {
+      'gal': galToL,
+      'lbs': lbsToKg,  
+      'mi':  miToKm,
+      'L':   1/galToL,
+      'kg':  1/lbsToKg,
+      'km':  1/miToKm
     }
     
+    return Number(initNum * units[initUnit]).toPrecision(6);
   };
   
   this.getString = function(initNum, initUnit, returnNum, returnUnit) {
-    var result = initNum + ' ' + initUnit + ' converts to ' + returnNum + ' ' + returnUnit;
+    var result = `${initNum} ${this.spellOutUnit(initUnit)} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`;
     
     return result;
   };
