@@ -10,28 +10,29 @@ function ConvertHandler() {
   
   this.getNum = function(input) {
     var match  = input.match(/[a-z]|[A-Z]/);
-    console.log(match)
     var idx = match ? match.index : null;
     var result = input.slice(0, idx);
+    
     if (result === '') {
-      return 1;
-    }
-    if (result.indexOf('/') != -1) {
-      result = result.split('/');
-      result = (result[0]/result[1]).toPrecision(6);
+      return '1';
     }
     
+    if ((/^\d*\.?\d*\/\d*\.?\d*$/).test(result)) {
+      result = result.split('/');
+      result = parseFloat((result[0]/result[1]).toPrecision(6));
+    }
+    
+    if (isNaN(result)) {
+      return undefined;
+    }
+
     return result;
   };
   
   this.getUnit = function(input) {
     var match  = input.match(/[a-z]|[A-Z]/);
     var idx = match ? match.index : null;
-    var result = input.slice(idx);
-    
-    // if (result === '') {
-    //   return 'invalid unit';
-    // }
+    var result = input.slice(idx).toLowerCase();
     
     return result;
   };
@@ -39,16 +40,16 @@ function ConvertHandler() {
   this.getReturnUnit = function(initUnit) {
     
     var units = {
-      gal: 'L',
+      gal: 'l',
       lbs: 'kg',
       mi:  'km',
-      L:   'gal',
+      l:   'gal',
       kg:  'lbs',
       km:  'mi'
     }
     
     if (!units.hasOwnProperty(initUnit)) {
-        return 'invalid unit';
+        return 'e';
     }
     
     return units[initUnit];
@@ -59,7 +60,7 @@ function ConvertHandler() {
       gal: 'gallons',
       lbs: 'pounds',
       mi:  'miles',
-      L:   'liters',
+      l:   'liters',
       kg:  'kilograms',
       km:  'kilometers'
     }
@@ -73,19 +74,21 @@ function ConvertHandler() {
     const miToKm = 1.60934;
     
     if (isNaN(initNum) | !isFinite(initNum)) {
-      return 'invalid number';
+      return 'e';
     }
     
     var units = {
       'gal': galToL,
       'lbs': lbsToKg,  
       'mi':  miToKm,
-      'L':   1/galToL,
+      'l':   1/galToL,
       'kg':  1/lbsToKg,
       'km':  1/miToKm
     }
     
-    return Number(initNum * units[initUnit]).toPrecision(6);
+    var result = parseFloat((initNum * units[initUnit]).toPrecision(6));
+
+    return result;
   };
   
   this.getString = function(initNum, initUnit, returnNum, returnUnit) {
